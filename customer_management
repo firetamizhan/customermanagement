@@ -1,0 +1,68 @@
+import pymysql
+
+# Establish a connection to the MySQL database
+mydb = pymysql.connect(
+    host="localhost",
+    user="root",
+    password="Jothiram@2119",
+    database="complaintmanagement"
+)
+
+def add_complaint(customer_name, complaint_text):
+    # Insert a new complaint into the database
+    cursor = mydb.cursor()
+    insert_query = "INSERT INTO complaints (customer_name, complaint_text, date_submitted) VALUES (%s, %s, NOW())"
+    data = (customer_name, complaint_text)
+    cursor.execute(insert_query, data)
+    mydb.commit()
+    cursor.close()
+
+def update_complaint_status(complaint_id, new_status):
+    # Update the status of a complaint
+    cursor = mydb.cursor()
+    update_query = "UPDATE complaints SET status = %s WHERE complaint_id = %s"
+    data = (new_status, complaint_id)
+    cursor.execute(update_query, data)
+    mydb.commit()
+    cursor.close()
+
+def list_complaints():
+    # Retrieve and display a list of complaints
+    cursor = mydb.cursor()
+    query = "SELECT * FROM complaints"
+    cursor.execute(query)
+    complaints = cursor.fetchall()
+    cursor.close()
+    return complaints
+
+
+while True:
+    print("Complaint Management System")
+    print("1. Add Complaint")
+    print("2. Update Complaint Status")
+    print("3. List Complaints")
+    print("4. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        customer_name = input("Enter customer name: ")
+        complaint_text = input("Enter complaint text: ")
+        add_complaint(customer_name, complaint_text)
+        print("Complaint added successfully!")
+
+    elif choice == "2":
+        complaint_id = input("Enter complaint ID: ")
+        new_status = input("Enter new status (Open/In Progress/Closed): ")
+        update_complaint_status(complaint_id, new_status)
+        print("Complaint status updated!")
+
+    elif choice == "3":
+        complaints = list_complaints()
+        for complaint in complaints:
+            print(f"Complaint ID: {complaint[0]}, Customer Name: {complaint[1]}, Status: {complaint[4]}")
+
+    elif choice == "4":
+        break
+
+
